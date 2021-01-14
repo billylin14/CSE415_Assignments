@@ -14,6 +14,8 @@ class TestA1Classes(unittest.TestCase):
         self.assertEqual(rect.is_rectangle(), True)
         diamond = a1.Polygon(4, [1, 1, 1, 1], [114, 66, 114, 66])
         self.assertEqual(diamond.is_rectangle(), False)
+        notRec = a1.Polygon(4, lengths=[1, 1, 1, 1], angles=None)
+        self.assertEqual(notRec.is_rectangle(), None)
 
     def test_rhombus(self):
         """Provided test for is_rhombus in starter code."""
@@ -26,6 +28,11 @@ class TestA1Classes(unittest.TestCase):
         self.assertEqual(rect.is_square(), None)
         diamond = a1.Polygon(4, [1, 1, 1, 1], [114, 66, 114, 66])
         self.assertEqual(diamond.is_square(), False)
+        notSquare = a1.Polygon(4, lengths=[5, 4, 4, 4], angles=None)
+        self.assertEqual(notSquare.is_square(), False)
+        notSquare1 = a1.Polygon(4, lengths=[1, 1, 1, 1], angles=None)
+        self.assertEqual(notSquare1.is_square(), None)
+        
 
     def test_regular_hexagon(self):
         """Provided test for is_regular_hexagon in starter code."""
@@ -35,6 +42,10 @@ class TestA1Classes(unittest.TestCase):
         self.assertEqual(hexagon_1.is_regular_hexagon(), None)
         hexagon_2 = a1.Polygon(6, [1] * 6, [120] * 6)
         self.assertEqual(hexagon_2.is_regular_hexagon(), True)
+        hexagon_3 = a1.Polygon(6, lengths=[5, 4, 4, 4, 4, 4], angles=None)
+        self.assertEqual(hexagon_3.is_regular_hexagon(), False)
+        hexagon_4 = a1.Polygon(6, lengths=[4, 4, 4, 4, 4, 4], angles=None)
+        self.assertEqual(hexagon_4.is_regular_hexagon(), None)
 
     def test_isosceles_triangle(self):
         """Provided test for is_isosceles_triangle in starter code."""
@@ -56,6 +67,8 @@ class TestA1Classes(unittest.TestCase):
         self.assertEqual(tri_1.is_scalene_triangle(), True)
         tri_2 = a1.Polygon(3, angles=[60, 60, 60])
         self.assertEqual(tri_2.is_scalene_triangle(), False)
+        tri_3 = a1.Polygon(3, lengths=None, angles=None)
+        self.assertEqual(tri_3.is_scalene_triangle(), None)
 
 
 if __name__ == '__main__':

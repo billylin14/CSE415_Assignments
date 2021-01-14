@@ -1,5 +1,5 @@
 import math
-import regex as re
+import re
 
 def is_multiple_of_9(n):
     """Return True if n is a multiple of 9; False otherwise."""
@@ -86,10 +86,10 @@ def count_words(text):
     newlines, and/or punctuation (characters like . , ; ! ? & ( ) [ ]  ).
     Convert all the letters to lower-case before the counting."""
     text = text.lower() #convert to all lower case
-    text = re.sub("^[^a-zA-Z0-9-+*/@#%']+", "", text) #remove leading non-letters
-    text = re.sub("[^a-zA-Z0-9-+*/@#%']$+", "", text) #remove trailing non-letters
+    text = re.sub(r"^[^a-zA-Z0-9-+*/@#%']+", "", text) #remove leading non-letters
+    text = re.sub(r"[^a-zA-Z0-9-+*/@#%']+$", "", text) #remove trailing non-letters
     dic= {}
-    for word in re.split("[^a-zA-Z0-9-+*/@#%']+", text):
+    for word in re.split(r"[^a-zA-Z0-9-+*/@#%']+", text):
         #print("word = \"", word, "\"")
         if word not in dic:
             dic[word] = 1
@@ -120,7 +120,12 @@ class Polygon:
         if the angle list is unknown (None). """
         if self.n_sides==4:
             if self.angles!=None:
-                return all(angle==90 for angle in self.angles) #might also need to add the condition to check sides
+                return all(angle==90 for angle in self.angles)
+            # elif self.lengths!=None:
+            #     if self.lengths==4:
+            #         return all(self.lengths.count(length)>=2 for length in self.lengths)
+            #     else:
+            #         return False
             else:
                 return None
         else:
@@ -142,7 +147,17 @@ class Polygon:
         """returns True if the polygon is a square,
         False if it is definitely not a square, and None
         if the lengths list or the angles list is unknown (None). """
-        return self.is_rectangle() and self.is_rhombus()
+        if self.n_sides==4:
+            if self.angles!=None and self.lengths!=None:
+                return all(angle==90 for angle in self.angles) and self.lengths.count(self.lengths[0])==len(self.lengths)
+            else:
+                if self.angles!=None and any(angle!=90 for angle in self.angles):
+                    return False
+                elif self.lengths!=None and self.lengths.count(self.lengths[0])!=len(self.lengths):
+                    return False
+                return None
+        else:
+            return False
 
     def is_regular_hexagon(self):
         """returns True if the polygon is a regular hexagon,
@@ -150,12 +165,20 @@ class Polygon:
         if the lengths list and angles list are unknown (None). """
         if self.n_sides==6:
             if self.lengths!=None and self.angles!=None:
-                if len(self.angles)==6:
-                    return self.lengths.count(self.lengths[0])==len(self.lengths) and all(angle==120 for angle in self.angles)
-                else:
-                    return False
+                return self.lengths.count(self.lengths[0])==len(self.lengths) and all(angle==120 for angle in self.angles)
             else:
-                return None
+                if self.lengths!=None:
+                    if self.lengths.count(self.lengths[0])!=len(self.lengths):
+                        return False
+                    else: 
+                        return None
+                elif self.angles!=None:
+                    if any(angle!=120 for angle in self.angles):
+                        return False
+                    else: 
+                        return None
+                else:
+                    return None
         else:
             return False
 
@@ -198,6 +221,13 @@ class Polygon:
         """returns True if the polygon is a scalene triangle,
         False if it is definitely not a scalene triangle, and None
         if the lengths list or angles list are unknown (None). """
-        return not (self.is_isosceles_triangle() or self.is_equilateral_triangle())
+        if self.n_sides==3:
+            result = self.is_isosceles_triangle() or self.is_equilateral_triangle()
+            if result is None:
+                return None
+            else:
+                return not(result)
+        else:
+            return False
     
                
