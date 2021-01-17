@@ -3,6 +3,8 @@
 Iterative Breadth-First Search of a problem space.
  Version 0.1, January 16, 2021.
  Billy Lin, Univ. of Washington.
+ Adapted from ItrDFS.py of Version 0.4, January 15, 2018 
+ by Steve Tanimoto, Univ. ofWashington.
 
  Usage:
  python3 ItrBFS.py TowersOfHanoi
