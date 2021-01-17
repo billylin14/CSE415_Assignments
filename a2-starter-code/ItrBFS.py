@@ -1,13 +1,12 @@
 #!/usr/bin/python3
-''' ItrDFS.py
-Iterative Depth-First Search of a problem space.
- Version 0.4, January 15, 2018.
- Steve Tanimoto, Univ. of Washington.
- Paul G. Allen School of Computer Science and Engineering
+''' ItrBFS.py
+Iterative Breadth-First Search of a problem space.
+ Version 0.1, January 16, 2021.
+ Billy Lin, Univ. of Washington.
 
  Usage:
- python3 ItrDFS.py TowersOfHanoi
-# The numbered STEP comments in the function IterativeDFS correspond
+ python3 ItrBFS.py TowersOfHanoi
+# The numbered STEP comments in the function IterativeBFS correspond
  to the algorithm steps for iterative depth-first as presented
  in Slide 7 of the "Basic Search Algorithms" lecture.
 '''
@@ -21,11 +20,11 @@ else:
   import importlib
   Problem = importlib.import_module(sys.argv[1])
 
-print("\nWelcome to ItrDFS")
+print("\nWelcome to ItrBFS")
 COUNT = None
 BACKLINKS = {}
 
-def runDFS():
+def runBFS():
   initial_state = Problem.CREATE_INITIAL_STATE()
   print("Initial State:")
   print(initial_state)
@@ -33,11 +32,11 @@ def runDFS():
   COUNT = 0
   BACKLINKS = {}
   MAX_OPEN_LENGTH = 0
-  IterativeDFS(initial_state)
+  IterativeBFS(initial_state)
   print(str(COUNT)+" states expanded.")
   print('MAX_OPEN_LENGTH = '+str(MAX_OPEN_LENGTH))
 
-def IterativeDFS(initial_state):
+def IterativeBFS(initial_state):
   global COUNT, BACKLINKS, MAX_OPEN_LENGTH
 
 # STEP 1. Put the start state on a list OPEN
@@ -72,16 +71,18 @@ def IterativeDFS(initial_state):
         new_state = op.state_transf(S)
         if not (new_state in CLOSED):
           L.append(new_state)
-          BACKLINKS[new_state] = S
+          BACKLINKS[new_state] = S #key:successors, value:parents
 
-# STEP 5. Delete from OPEN any members of OPEN that occur on L.
-#         Insert all members of L at the front of OPEN.
-    for s2 in L:
-      for i in range(len(OPEN)):
-        if (s2 == OPEN[i]):
-          del OPEN[i]; break
+# STEP 5. Delete **from L** any members of OPEN that occur on L ==> Delete all elements in L that also occur in OPEN
+#         (DFS: Delete from OPEN any members of OPEN that occur on L.)
+#         Insert all members of L at the **end** of OPEN.
+#         (DFS: Insert all members of L at the front of OPEN.)
+    for s in OPEN:
+      for i in range(len(L)):
+        if L[i] == s:
+          del L[i]; break
 
-    OPEN = L + OPEN
+    OPEN.extend(L)
     print_state_list("OPEN", OPEN)
 # STEP 6. Go to Step 2.
 
@@ -111,5 +112,5 @@ def report(open, closed, count):
   print("COUNT = "+str(count))
 
 if __name__=='__main__':
-  runDFS()
+  runBFS()
 
