@@ -32,7 +32,7 @@ class State:
 
   def __eq__(self,s2):
     for side in ['left', 'right']:
-      self.d[side].sort()
+      self.d[side]
       s2.d[side].sort()
       if self.d[side] != s2.d[side]: return False
     return True
@@ -40,8 +40,7 @@ class State:
   def __str__(self):
     # Produces a textual description of a state.
     # Might not be needed in normal operation with GUIs.
-    return "\n" + ' '.join(self.d['left']) + " || " + ' '.join(self.d['right']) + "\n"
-
+    return "\n" + '[' + ' '.join(self.d['left']) + " || " + ' '.join(self.d['right']) + ']' + "\n"
 
   def __hash__(self):
     return (self.__str__()).__hash__()

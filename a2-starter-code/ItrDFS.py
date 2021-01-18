@@ -59,7 +59,7 @@ def IterativeDFS(initial_state):
 
     if Problem.GOAL_TEST(S):
       print(Problem.GOAL_MESSAGE_FUNCTION(S))
-      path = backtrace(S)
+      path = backtrace(S, initial_state)
       print('Length of solution path found: '+str(len(path)-1)+' edges')
       return
     COUNT += 1
@@ -91,14 +91,12 @@ def print_state_list(name, lst):
     print(str(s),end=', ')
   print(str(lst[-1]))
 
-def backtrace(S):
+def backtrace(S, initial_state):
   global BACKLINKS
   path = []
   while S:
     path.append(S)
-    if S in BACKLINKS:
-      S = BACKLINKS[S]
-    else: S = None
+    S = BACKLINKS[S]
   path.reverse()
   print("Solution path: ")
   for s in path:

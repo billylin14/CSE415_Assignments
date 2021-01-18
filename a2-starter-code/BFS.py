@@ -99,9 +99,7 @@ def backtrace(S):
   path = []
   while S:
     path.append(S)
-    if S in BACKLINKS:
-      S = BACKLINKS[S]
-    else: S = None
+    S = BACKLINKS[S]
   path.reverse()
   print("Solution path: ")
   for s in path:
