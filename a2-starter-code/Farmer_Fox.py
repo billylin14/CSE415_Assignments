@@ -32,8 +32,6 @@ class State:
 
   def __eq__(self,s2):
     for side in ['left', 'right']:
-      self.d[side]
-      s2.d[side].sort()
       if self.d[side] != s2.d[side]: return False
     return True
 
@@ -56,8 +54,6 @@ class State:
   def can_move(self,items,From):
     '''Tests whether it's legal to move a disk in state s
        from the From peg to the To peg.'''
-    # print("To move = ", items)
-    # print("original = ", self.d[From])
     try:
         #check if items exist in From
         if any(item not in self.d[From] for item in items): 
@@ -73,9 +69,7 @@ class State:
           for state in illegal:
               state.sort()
               if result==state: 
-                # print("this is illegal\n")
                 return False
-          # print("this is valid\n")
           return True
     except (Exception) as e:
       print(e)
@@ -116,7 +110,7 @@ class Operator:
 #</COMMON_CODE>
 
 #<INITIAL_STATE>
-INITIAL_DICT = {'left': ['Farmer', 'Fox', 'Chicken', 'Grain'], 'right':[] }
+INITIAL_DICT = {'left': ['Chicken', 'Farmer', 'Fox', 'Grain'], 'right':[] }
 CREATE_INITIAL_STATE = lambda: State(INITIAL_DICT)
 #DUMMY_STATE =  {'peg1':[], 'peg2':[], 'peg3':[] }
 #</INITIAL_STATE>
