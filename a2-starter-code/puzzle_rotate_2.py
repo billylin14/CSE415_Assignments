@@ -6,9 +6,9 @@ from EightPuzzle import *
 
 # We simply redefine the initial state.
 
-init_state_list = [[6, 3, 0], 
-                   [7, 4, 1], 
-                   [8, 5, 2]]
+init_state_list = [[4, 5, 0], 
+                   [1, 2, 8], 
+                   [3, 7, 6]]
 
 CREATE_INITIAL_STATE = lambda: State(init_state_list)
 

@@ -1,0 +1,8 @@
+partner_retrospective.text
+by Reece Peters, Billy Lin
+UWNetID: reecep81, lin14
+Student number: 1866651, 1765327
+
+Assignment 2, Part 2, in CSE 415, Winter 2021.
+ 
+We divided the work evenly using pair programming to do everything at the same time over Zoom.

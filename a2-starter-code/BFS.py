@@ -1,17 +1,15 @@
 #!/usr/bin/python3
-''' ItrBFS.py
-Iterative Breadth-First Search of a problem space.
- Version 0.1, January 16, 2021.
- Billy Lin, Univ. of Washington.
- Adapted from ItrDFS.py of Version 0.4, January 15, 2018 
- by Steve Tanimoto, Univ. ofWashington.
+'''BFS.py
+by Billy Lin
+UWNetID: lin14
+Student number: 1765327
 
- Usage:
- python3 ItrBFS.py TowersOfHanoi
-# The numbered STEP comments in the function IterativeBFS correspond
- to the algorithm steps for iterative depth-first as presented
- in Slide 7 of the "Basic Search Algorithms" lecture.
+Assignment 2, Part 1, in CSE 415, Winter 2021.
+ 
+This file contains my problem formulation for the Breadth first search
+algorithm
 '''
+
 
 import sys
 

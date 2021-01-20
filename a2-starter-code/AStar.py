@@ -1,22 +1,11 @@
-''' UCS.py
+''' AStar.py
+by Reece Peters, Billy Lin
+UWNetID: reecep81, lin14
+Student number: 1866651, 1765327
 
-Uniform Cost Search of a problem space.
- Steve Tanimoto, Univ. of Washington.
- Paul G. Allen School of Computer Science and Engineering
-
- Usage:
- python3 UCS.py FranceWithCosts
-This implementation does not reconsider a state once it has
-been put on CLOSED list.  If this implementation is extended
-to implement A*, and it is to work will all heuristics,
-including non-admissible ones, then when a state is regenerated
-that was already put on the CLOSED list, it may need reconsideration
-if the new priority value is lower than the old one.
-
-Most of the print statements have been commented out, but can be
-useful for a closer look at execution, or if preparing some
-debugging infrastructure before adding extensions, such as for A*.
-
+Assignment 2, Part 2, in CSE 415, Winter 2021.
+ 
+This file contains our formulation for A star search from the UCS starter code.
 '''
 
 VERBOSE = True  # Set to True to see progress; but it slows the search.
@@ -29,7 +18,9 @@ else:
   import importlib
   Problem = importlib.import_module(sys.argv[1])
 
-print("\nWelcome to UCS.")
+print("\nWelcome to A-Star Search.")
+
+h = Problem.h
 
 COUNT = None # Number of nodes expanded.
 MAX_OPEN_LENGTH = None # How long OPEN ever gets.
@@ -107,9 +98,9 @@ class My_Priority_Queue:
     txt += ']'
     return txt
 
-def runUCS():
+def runAStar():
   '''This is an encapsulation of some setup before running
-  UCS, plus running it and then printing some stats.'''
+  A-Star search, plus running it and then printing some stats.'''
   initial_state = Problem.CREATE_INITIAL_STATE()
   print("Initial State:")
   print(initial_state)
@@ -117,22 +108,22 @@ def runUCS():
   COUNT = 0
   BACKLINKS = {}
   MAX_OPEN_LENGTH = 0
-  SOLUTION_PATH = UCS(initial_state)
+  SOLUTION_PATH = AStar(initial_state)
   print(str(COUNT)+" states expanded.")
   print('MAX_OPEN_LENGTH = '+str(MAX_OPEN_LENGTH))
   #print("The CLOSED list is: ", ''.join([str(s)+' ' for s in CLOSED]))
 
-def UCS(initial_state):
-  '''Uniform Cost Search. This is the actual algorithm.'''
+def AStar(initial_state):
+  '''A-Star search. This is the actual algorithm.'''
   global g, COUNT, BACKLINKS, MAX_OPEN_LENGTH, CLOSED, TOTAL_COST
   CLOSED = []
   BACKLINKS[initial_state] = None
-  # The "Step" comments below help relate UCS's implementation to
+  # The "Step" comments below help relate A-Star Searches implementation to
   # those of Depth-First Search and Breadth-First Search.
 
 # STEP 1a. Put the start state on a priority queue called OPEN
   OPEN = My_Priority_Queue()
-  OPEN.insert(initial_state, 0)
+  OPEN.insert(initial_state, h(initial_state))
 # STEP 1b. Assign g=0 to the start state.
   g[initial_state]=0.0
 
@@ -164,12 +155,19 @@ def UCS(initial_state):
     for op in Problem.OPERATORS:
       if op.precond(S):
         new_state = op.state_transf(S)
-        if (new_state in CLOSED):
-          #print("Already have this state, in CLOSED. del ...")
-          del new_state
-          continue
         edge_cost = S.edge_distance(new_state)
         new_g = gs + edge_cost
+        # New f is the priority we insert into our OPEN Priority Queue
+        new_f = new_g + h(new_state)
+        if (new_state in CLOSED):
+          #print("Already have this state, in CLOSED. del ...")
+          # If the new priority is less than the old priority + the constant heuristic for the state
+          if (new_f < g[new_state] + h(new_state)): 
+           OPEN.insert(new_state, new_f)
+           CLOSED.remove(new_state)
+          else:
+           del new_state
+          continue
 
         # If new_state already exists on OPEN:
         #   If its new priority is less than its old priority,
@@ -179,17 +177,17 @@ def UCS(initial_state):
         if new_state in OPEN:
           #print("new_state is in OPEN already, so...")
           P = OPEN[new_state]
-          if new_g < P:
+          if new_f < P:
             #print("New priority value is lower, so del older one")
             del OPEN[new_state]
-            OPEN.insert(new_state, new_g)
+            OPEN.insert(new_state, new_f)
           else:
             #print("Older one is better, so del new_state")
             del new_state
             continue
         else:
             #print("new_state was not on OPEN at all, so just put it on.")
-            OPEN.insert(new_state, new_g)
+            OPEN.insert(new_state, new_f)
         BACKLINKS[new_state] = S
         g[new_state] = new_g
 
@@ -219,5 +217,5 @@ def report(open, closed, count):
   print("COUNT = "+str(count))
 
 if __name__=='__main__':
-  runUCS()
+  runAStar()
 
