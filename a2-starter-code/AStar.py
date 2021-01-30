@@ -13,7 +13,7 @@ VERBOSE = True  # Set to True to see progress; but it slows the search.
 import sys
 
 if sys.argv==[''] or len(sys.argv)<2:
-  import puzzle_rotate_2 as Problem
+  import FranceWithDXHeuristic as Problem
 else:
   import importlib
   Problem = importlib.import_module(sys.argv[1])
@@ -112,6 +112,7 @@ def runAStar():
   print(str(COUNT)+" states expanded.")
   print('MAX_OPEN_LENGTH = '+str(MAX_OPEN_LENGTH))
   #print("The CLOSED list is: ", ''.join([str(s)+' ' for s in CLOSED]))
+  return SOLUTION_PATH, COUNT, MAX_OPEN_LENGTH
 
 def AStar(initial_state):
   '''A-Star search. This is the actual algorithm.'''

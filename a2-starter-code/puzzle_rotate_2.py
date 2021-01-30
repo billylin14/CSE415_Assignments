@@ -2,7 +2,7 @@
 An instance of the Eight Puzzle.
 '''
 
-from EightPuzzle import *
+from EightPuzzleWithManhattan import *
 
 # We simply redefine the initial state.
 
