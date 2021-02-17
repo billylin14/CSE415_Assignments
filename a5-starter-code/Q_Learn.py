@@ -12,7 +12,7 @@ This is part of the UW Intro to AI Starter Code for Reinforcement Learning.
 # Edit the returned name to ensure you get credit for the assignment.
 def student_name():
 #*** ADD OR CHANGE CODE HERE ***
-   return "Your Lastname, Firstname" # For an autograder.
+   return "Lin, Billy" # For an autograder.
 
 STATES=None; ACTIONS=None; UQV_callback=None; Q_VALUES=None
 is_valid_goal_state=None; Terminal_state = None
@@ -79,71 +79,105 @@ def handle_transition(action, new_state, r):
     global PREVIOUS_STATE
 
 #*** ADD OR CHANGE CODE HERE ***
+    max_q = 0
+    for a in ACTIONS:
+        max_q = max(Q_VALUES[(new_state, a)], max_q)
+    sample = r + GAMMA*max_q
+    new_q_value = (1-ALPHA)*Q_VALUES[(PREVIOUS_STATE, action)] + ALPHA*sample
     
     # You should call update_Q_value before returning.  E.g.,
-    update_Q_value(PREVIOUS_STATE, action, -99)
+    Q_VALUES[(PREVIOUS_STATE, action)] = new_q_value
+    update_Q_value(PREVIOUS_STATE, action, new_q_value)
     
-    print("Transition to state: "+str(new_state)+\
-          "\n with reward "+str(r)+" is currently not handled by your program.")
+    print("Transition to state: "+str(new_state)+"\n with reward "+str(r))
     PREVIOUS_STATE = new_state
     return # Nothing needs to be returned.
 
+import random
+
 def choose_next_action(s, r, terminated=False):
-     '''When the GUI or engine calls this, the agent is now in state s,
-     and it receives reward r.
-     If terminated==True, it's the end of the episode, and this method
-      can just return None after you have handled the transition.
-
-     Use this information to update the q-value for the previous state
-     and action pair.  
+    '''When the GUI or engine calls this, the agent is now in state s,
+    and it receives reward r.
+    If terminated==True, it's the end of the episode, and this method
+    can just return None after you have handled the transition.
+    Use this information to update the q-value for the previous state
+    and action pair.  
      
-     Then the agent needs to choose its action and return that.
+    Then the agent needs to choose its action and return that.
+    '''
+    global INITIAL_STATE, PREVIOUS_STATE, LAST_ACTION
+    # Unless s is the initial state, compute a new q-value for the
+    # previous state and action.
+    if not (s==INITIAL_STATE):
+        # Compute your update here.
+        # if CUSTOM_ALPHA is True, manage the alpha values over time.
+        # Otherwise go with the fixed value.
+        new_qval = -99 # A bogus value for now.
 
-     '''
-     global INITIAL_STATE, PREVIOUS_STATE, LAST_ACTION
-     # Unless s is the initial state, compute a new q-value for the
-     # previous state and action.
-     if not (s==INITIAL_STATE):
-         # Compute your update here.
-         # if CUSTOM_ALPHA is True, manage the alpha values over time.
-         # Otherwise go with the fixed value.
-         new_qval = -99 # A bogus value for now.
-#*** ADD OR CHANGE CODE HERE ***
-         
-         # Save it in the dictionary of Q_VALUES:
-         Q_VALUES[(PREVIOUS_STATE, LAST_ACTION)] = new_qval
+        max_q = 0
+        for a in ACTIONS:
+            max_q = max(Q_VALUES[(s, a)], max_q)
+        sample = r + GAMMA*max_q
+        new_qval = (1-ALPHA)*Q_VALUES[(PREVIOUS_STATE, LAST_ACTION)] + ALPHA*sample
+        # Save it in the dictionary of Q_VALUES:
+        Q_VALUES[(PREVIOUS_STATE, LAST_ACTION)] = new_qval
 
-         # Then let the Engine and GUI know about the new Q-value.
-         update_Q_value(PREVIOUS_STATE, LAST_ACTION, new_qval)
+        # Then let the Engine and GUI know about the new Q-value.
+        update_Q_value(PREVIOUS_STATE, LAST_ACTION, new_qval)
          
      # Now select an action according to your Q-Learning criteria, such
      # as expected discounted future reward vs exploration.
+    if is_valid_goal_state(s):
+        action = "Exit"
+    elif s==Terminal_state:
+        action = None
+    else:
+        if USE_EXPLORATION_FUNCTION:
+            # Change this if you implement an exploration function:
+            #*** ADD OR CHANGE CODE HERE ***
+            print("You have not implemented an exploration function")
 
-     if USE_EXPLORATION_FUNCTION:
-         # Change this if you implement an exploration function:
-#*** ADD OR CHANGE CODE HERE ***
-         print("You have not implemented an exploration function")
-
-     # If EPSILON > 0, or CUSTOM_EPSILON is True,
-     # then use epsilon-greedy learning here.
-     # In order to access q-values, simply get them from the dictionary, e.g.,
-     # some_qval = Q_VALUES[(some_state, some_action)]
-
-#*** ADD OR CHANGE CODE HERE ***     
-     some_action = ACTIONS[0] # a placeholder, so some action is returned.
-     LAST_ACTION = some_action # remember this for next time
-     PREVIOUS_STATE = s        #    "       "    "   "    "
-     return some_action
+        # If EPSILON > 0, or CUSTOM_EPSILON is True,
+        # then use epsilon-greedy learning here.
+        elif EPSILON > 0 or CUSTOM_EPSILON:
+        # In order to access q-values, simply get them from the dictionary, e.g.,
+        # some_qval = Q_VALUES[(some_state, some_action)] 
+            if random.uniform(0, 1) < EPSILON:
+                action = random.choice(ACTIONS)
+            else:
+                actions_available = [action for (state, action) in Q_VALUES.keys() if state == s]
+                action = actions_available[0] #initialize chosen action to be the first in the list
+                max_val = Q_VALUES[(s, action)] 
+                for a in actions_available:
+                    new_val = Q_VALUES[(s, a)]
+                    if new_val > max_val:
+                        max_val = new_val
+                        action = a 
+                        
+    LAST_ACTION = action # remember this for next time
+    PREVIOUS_STATE = s   #    "       "    "   "    "
+    return action
 
 Policy = {}
 def extract_policy(S, A):
-   '''Return a dictionary mapping states to actions. Obtain the policy
-   using the q-values most recently computed.
-   Ties between actions having the same (s, a) value can be broken arbitrarily.
-   Reminder: goal states should map to the Exit action, and no other states
-   should map to the Exit action.
-   '''
-   global Policy
-   Policy = {}
-#*** ADD OR CHANGE CODE HERE ***     
-   return Policy
+    '''Return a dictionary mapping states to actions. Obtain the policy
+    using the q-values most recently computed.
+    Ties between actions having the same (s, a) value can be broken arbitrarily.
+    Reminder: goal states should map to the Exit action, and no other states
+    should map to the Exit action.
+    '''
+    global Policy
+    Policy = {}
+#*** ADD OR CHANGE CODE HERE ***  
+    for s in S:
+        #extract all tuples (s, a) that start from the current state: state_action = [(s, a0), (s, a1), (s, a2)...]
+        state_action = [(state, action) for (state, action) in Q_VALUES.keys() if state == s]
+        max_sa = state_action[0] #initialize into the first state-action pair's value
+        max_val = Q_VALUES[max_sa] 
+        for sa in state_action:
+            new_val = Q_VALUES[sa]
+            if new_val > max_val:
+                max_sa = sa
+                max_val = new_val
+        Policy[s] = max_sa[1]
+    return Policy
