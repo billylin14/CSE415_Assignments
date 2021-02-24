@@ -268,7 +268,7 @@ def Agent_turn(a, reset=False):
       # If no state change happened, don't alter highlighting.
       if Agent_state==New_Agent_state:
           if not QUIET_MODE:
-              time.sleep(0.2) # And don't wait so long.
+              time.sleep(0.1) # And don't wait so long.
           return
       if not QUIET_MODE:
         Vis.unhighlight(Agent_state)
@@ -281,7 +281,7 @@ def Agent_turn(a, reset=False):
         Agent_state = New_Agent_state
     Vis.set_driving_console_status(allow_exit_only=(is_valid_goal_state(Agent_state)))
     if not QUIET_MODE:
-      time.sleep(0.5) # Quarter second pause between moves of the agent.
+      time.sleep(0.25) # Quarter second pause between moves of the agent.
 
 def run_Agent(param):
     '''Run the agent for several transitions, depending on
@@ -474,7 +474,7 @@ def MDP_command(cmd, param):
         init_q_values(Q_from_QL)
         mode=Vis.DISPLAY_VALS_VAR.get()
         if mode==4:
-          Vis.reshow_all_q_values(Q_from_QL)
+          Vis.reshow_all_q_values(Q_from_QL, CLOSED)
 
         Q_Learn.setup(ALL_STATES, ACTIONS, Q_from_QL, update_q_value, is_valid_goal_state, Terminal_state, use_exp_fn=True )
         update_policy_displays(which="QL")

@@ -11,13 +11,18 @@ This is part of the UW Intro to AI Starter Code for Reinforcement Learning.
 
 # Edit the returned name to ensure you get credit for the assignment.
 def student_name():
-#*** ADD OR CHANGE CODE HERE ***
-   return "Lin, Billy" # For an autograder.
+   return "Lin, Billy" 
 
 STATES=None; ACTIONS=None; UQV_callback=None; Q_VALUES=None
 is_valid_goal_state=None; Terminal_state = None
 USE_EXPLORATION_FUNCTION = None
 INITIAL_STATE = None
+
+exp_func_flag = None
+
+visit_count = {}
+n_iterations = 0
+
 def setup(states, actions, q_vals_dict, update_q_value_callback,\
     goal_test, terminal, use_exp_fn=False):
     '''This method is called by the GUI the first time a Q_Learning
@@ -27,6 +32,7 @@ def setup(states, actions, q_vals_dict, update_q_value_callback,\
     for each (s, a) pair.'''
     global STATES, ACTIONS, UQV_callback, Q_VALUES, is_valid_goal_state
     global USE_EXPLORATION_FUNCTION, Terminal_state
+    global visit_count, exp_func_flag, n_iterations
     STATES = states
     ACTIONS = actions
     Q_VALUES = q_vals_dict
@@ -35,9 +41,11 @@ def setup(states, actions, q_vals_dict, update_q_value_callback,\
     Terminal_state = terminal
     USE_EXPLORATION_FUNCTION = use_exp_fn
     if USE_EXPLORATION_FUNCTION:
-#*** ADD OR CHANGE CODE HERE ***
-         # Change this if you implement an exploration function:
-         print("You have not implemented an exploration function")
+        print("Use an exploration function")
+        exp_func_flag = True
+    for s in STATES:
+        visit_count[s] = 0
+    n_iterations = 0
 
 PREVIOUS_STATE = None
 LAST_ACTION = None
@@ -78,7 +86,6 @@ def handle_transition(action, new_state, r):
     transition.'''
     global PREVIOUS_STATE
 
-#*** ADD OR CHANGE CODE HERE ***
     max_q = 0
     for a in ACTIONS:
         max_q = max(Q_VALUES[(new_state, a)], max_q)
@@ -94,6 +101,7 @@ def handle_transition(action, new_state, r):
     return # Nothing needs to be returned.
 
 import random
+import math
 
 def choose_next_action(s, r, terminated=False):
     '''When the GUI or engine calls this, the agent is now in state s,
@@ -106,44 +114,32 @@ def choose_next_action(s, r, terminated=False):
     Then the agent needs to choose its action and return that.
     '''
     global INITIAL_STATE, PREVIOUS_STATE, LAST_ACTION
+    global visit_count, n_iterations
+
     # Unless s is the initial state, compute a new q-value for the
     # previous state and action.
+    n_iterations += 1
     if not (s==INITIAL_STATE):
         # Compute your update here.
         # if CUSTOM_ALPHA is True, manage the alpha values over time.
         # Otherwise go with the fixed value.
-        new_qval = -99 # A bogus value for now.
-
-        max_q = 0
-        for a in ACTIONS:
-            max_q = max(Q_VALUES[(s, a)], max_q)
-        sample = r + GAMMA*max_q
-        new_qval = (1-ALPHA)*Q_VALUES[(PREVIOUS_STATE, LAST_ACTION)] + ALPHA*sample
-        # Save it in the dictionary of Q_VALUES:
-        Q_VALUES[(PREVIOUS_STATE, LAST_ACTION)] = new_qval
-
-        # Then let the Engine and GUI know about the new Q-value.
-        update_Q_value(PREVIOUS_STATE, LAST_ACTION, new_qval)
+        handle_transition(LAST_ACTION, s, r)
+        visit_count[PREVIOUS_STATE] += 1  
          
      # Now select an action according to your Q-Learning criteria, such
      # as expected discounted future reward vs exploration.
+    global EPSILON
+
     if is_valid_goal_state(s):
         action = "Exit"
     elif s==Terminal_state:
         action = None
     else:
-        if USE_EXPLORATION_FUNCTION:
-            # Change this if you implement an exploration function:
-            #*** ADD OR CHANGE CODE HERE ***
-            print("You have not implemented an exploration function")
-
-        # If EPSILON > 0, or CUSTOM_EPSILON is True,
-        # then use epsilon-greedy learning here.
-        elif EPSILON > 0 or CUSTOM_EPSILON:
-        # In order to access q-values, simply get them from the dictionary, e.g.,
-        # some_qval = Q_VALUES[(some_state, some_action)] 
-            if random.uniform(0, 1) < EPSILON:
+        if USE_EXPLORATION_FUNCTION or exp_func_flag:
+            #exploration: if the state hasn't been visited 50 times, do a random action
+            if visit_count[s] <= 50: 
                 action = random.choice(ACTIONS)
+            #exploitation: if the state has been visited over 50 times, use q-values to determine the next action
             else:
                 actions_available = [action for (state, action) in Q_VALUES.keys() if state == s]
                 action = actions_available[0] #initialize chosen action to be the first in the list
@@ -153,7 +149,23 @@ def choose_next_action(s, r, terminated=False):
                     if new_val > max_val:
                         max_val = new_val
                         action = a 
-                        
+        else:
+            # If EPSILON > 0, or CUSTOM_EPSILON is True,
+            # then use epsilon-greedy learning here.
+            if EPSILON > 0 or CUSTOM_EPSILON:
+                if CUSTOM_EPSILON:
+                    EPSILON = math.exp(-0.001*n_iterations)
+                if random.uniform(0, 1) < EPSILON:
+                    action = random.choice(ACTIONS)
+                else:
+                    actions_available = [action for (state, action) in Q_VALUES.keys() if state == s]
+                    action = actions_available[0] #initialize chosen action to be the first in the list
+                    max_val = Q_VALUES[(s, action)] 
+                    for a in actions_available:
+                        new_val = Q_VALUES[(s, a)]
+                        if new_val > max_val:
+                            max_val = new_val
+                            action = a 
     LAST_ACTION = action # remember this for next time
     PREVIOUS_STATE = s   #    "       "    "   "    "
     return action
@@ -168,7 +180,6 @@ def extract_policy(S, A):
     '''
     global Policy
     Policy = {}
-#*** ADD OR CHANGE CODE HERE ***  
     for s in S:
         #extract all tuples (s, a) that start from the current state: state_action = [(s, a0), (s, a1), (s, a2)...]
         state_action = [(state, action) for (state, action) in Q_VALUES.keys() if state == s]

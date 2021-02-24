@@ -11,5 +11,6 @@
     "python.testing.nosetestsEnabled": false,
     "python.testing.unittestEnabled": true,
     "python.terminal.executeInFileDir": true,
-    "python.terminal.activateEnvInCurrentTerminal": true
+    "python.terminal.activateEnvInCurrentTerminal": true,
+    "python.envFile": "C:\\Users\\USER\\AppData\\Local\\Programs\\Python\\Python39\\Lib"
 }

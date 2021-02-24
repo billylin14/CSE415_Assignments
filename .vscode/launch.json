@@ -11,5 +11,9 @@
             "program": "${file}",
             "console": "integratedTerminal"
         }
-    ]
+    ],
+    "cwd": "${\\Users\\USER\\Desktop\\UW\\courses\\21 WI\\CSE415\\Assignments}",
+    "env": {
+        "PYTHONPATH": "${cwd}"
+    }
 }

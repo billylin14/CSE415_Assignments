@@ -666,10 +666,10 @@ def show_q_values(q_values, S):
 #    Q_VAR.set(False)
 #    show_q_values(None, None)
 
-#def reshow_all_q_values(q_values, S):
-#    '''For now, just call show_q_values.
-#    Possible future version will just reconfigure existing TK_Canvas items.'''
-#    show_q_values(q_values, S)
+def reshow_all_q_values(q_values, S):
+   '''For now, just call show_q_values.
+   Possible future version will just reconfigure existing TK_Canvas items.'''
+   show_q_values(q_values, S)
 
 def update_q_value(s, a, value):
     '''Change the display for this one q-value. '''
