@@ -20,9 +20,9 @@ import math # For sqrt.
 
 # Although training will be done with all 4 features, when plotting
 # in 2 D, which features are to be used?
-#FEATURES_TO_PLOT = [2, 3] # Petal length, petal width.
-#FEATURES_TO_PLOT = [0, 1] # Sepal length, sepal width.
-FEATURES_TO_PLOT = [0, 2] # Sepal length, petal length.
+FEATURES_TO_PLOT = [2, 3] # Petal length, petal width.
+# FEATURES_TO_PLOT = [0, 1] # Sepal length, sepal width.
+# FEATURES_TO_PLOT = [0, 2] # Sepal length, petal length.
 
 MAX_EPOCHS = 200
 ALPHA = 1.0 # Used here to override the ALPHA in ternary_perceptron.py.
